@@ -38,9 +38,13 @@ namespace CertGenerator
                 //new Oid("1.3.6.1.5.5.7.3.8") // timestamp
             }, false));
 
+            // SAN is required for modern browsers
             var san = new SubjectAlternativeNameBuilder();
-            //san.AddIpAddress(IPAddress.Loopback);
-            //san.AddIpAddress(IPAddress.IPv6Loopback);
+            if (string.Equals(dnsName, "localhost"))
+            {
+                san.AddIpAddress(IPAddress.Loopback);
+                san.AddIpAddress(IPAddress.IPv6Loopback);
+            }
             san.AddDnsName(dnsName);
             req.CertificateExtensions.Add(san.Build());
         }
