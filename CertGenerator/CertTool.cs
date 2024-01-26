@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Xml.Linq;
 
 namespace CertGenerator
 {
@@ -10,15 +9,13 @@ namespace CertGenerator
     /// </summary>
     static class CertificateTool
     {
-        static public X509Certificate2 CreateSelfSigned(string dnsName, int years = 10)
+        public static X509Certificate2 CreateSelfSigned(string dnsName, int years = 10)
         {
-            using (var rsa = RSA.Create(2048))
-            {
-                var req = new CertificateRequest($"CN={dnsName}", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-                AddHttpsUsage(req, dnsName);
-                var cert = req.CreateSelfSigned(DateTimeOffset.Now, DateTimeOffset.Now.AddYears(years));
-                return cert;
-            }
+            using var rsa = RSA.Create(2048);
+            var req = new CertificateRequest($"CN={dnsName}", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            AddHttpsUsage(req, dnsName);
+            var cert = req.CreateSelfSigned(DateTimeOffset.Now, DateTimeOffset.Now.AddYears(years));
+            return cert;
         }
         static void AddHttpsUsage(CertificateRequest req, string dnsName)
         {
@@ -32,11 +29,7 @@ namespace CertGenerator
 
             req.CertificateExtensions.Add(new X509SubjectKeyIdentifierExtension(req.PublicKey, false));
 
-            req.CertificateExtensions.Add(new X509EnhancedKeyUsageExtension(new OidCollection
-            {
-                new Oid("1.3.6.1.5.5.7.3.1") // server auth
-                //new Oid("1.3.6.1.5.5.7.3.8") // timestamp
-            }, false));
+            req.CertificateExtensions.Add(new X509EnhancedKeyUsageExtension([new Oid("1.3.6.1.5.5.7.3.1")], false));
 
             // SAN is required for modern browsers
             var san = new SubjectAlternativeNameBuilder();

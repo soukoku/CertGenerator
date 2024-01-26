@@ -6,12 +6,10 @@ if (args.Length == 0)
 {
     Console.WriteLine("Call this utility with the host name to generate self-signed certificate files for use in https.");
     Console.WriteLine("e.g.");
-    using (var proc = Process.GetCurrentProcess())
-    {
-        Console.WriteLine($"\t{proc.ProcessName} localhost");
-        Console.WriteLine("or");
-        Console.WriteLine($"\t{proc.ProcessName} host.domain.com");
-    }
+    using var proc = Process.GetCurrentProcess();
+    Console.WriteLine($"\t{proc.ProcessName} localhost");
+    Console.WriteLine("or");
+    Console.WriteLine($"\t{proc.ProcessName} host.domain.com");
 }
 else
 {
